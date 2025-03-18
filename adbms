@@ -1,0 +1,62 @@
+-- 
+-- Roll No: 39
+-- Name: NAJMATH M V
+-- Program: sample program 2
+-- 
+
+
+--
+-- Table structure for table departments
+--
+create table departments (dno integer primary key, dname varchar(50) not null);
+
+--
+-- Table structure for table bookissues
+--
+create table bookissues (bookid integer, studentid integer, issue_date date, return_date date, fine decimal(5,2) default 0.00);
+
+--
+-- Table structure for table students
+--
+alter table students drop column course;
+alter table students add column dno integer;
+alter table students add constraint fk_dno foreign key (dno) references departments(dno);
+
+--
+-- Table structure for table bookissues
+--
+alter table bookissues add primary key (bookid, studentid);
+alter table bookissues add constraint fk_bookid foreign key (bookid) references books(bookid);
+alter table bookissues add constraint fk_studentid foreign key (studentid) references students(id);
+
+--
+-- Dumping data for table departments
+--
+insert into departments (dno, dname) values (1, 'MCA');
+
+--
+-- Dumping data for table bookissues
+--
+insert into bookissues (bookid, studentid, issue_date, return_date, fine) values (2, 101, '2025-02-10', null, 0.00), (1, 102, '2025-02-12', '2025-02-18', 0.00);
+
+--
+-- SQl Query Statements
+--
+--Q7. List all books issued with student details (include attributes studentid, name, bookid, title)
+select students.id,students.sname,books.bookid,books.title from bookissues join students on bookissues.studentid=students.id join books on bookissues.bookid=books.bookid;
+--Q8. Show all students along with their department names (include attributes studentid, name, dname)
+select students.id,students.sname,departments.dname from students join departments on students.dno = departments.dno;
+--Q9. List students who have issued books along with their department (include attributes studentid, name, dname, bookid, title)
+select students.id,students.sname,departments.dname,bookissues.bookid,books.title from
+bookissues join students on bookissues.studentid=students.id join books on bookissues.bookid=books.bookid join departments on students.dno=departments.dno;
+--Q10. Find books that have never been issued (include attributes bookid, title)
+ select books.bookid,books.title from books left join bookissues on books.bookid=bookissues.bookid where bookissues.bookid is NULL;
+--Q11. Get students who have not issued any book (include attributes studentid, name)
+select students.id,students.sname from students left join bookissues on students.id=bookissues.studentid;
+--Q12. Find students who have issued books but not returned them yet (include attributes studentid, name)
+select students.id, students.sname from students join bookissues on students.id=bookissues.studentid where bookissues.return_date is NULL;
+--Q13. List the books whose price greater than rupees 600 (include attributes bookid, title)
+select bookid,title from books where price>%s;
+
+
+-- -----Question number should be commented---------------#This line may be removed in the actual file
